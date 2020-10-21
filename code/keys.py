@@ -3,7 +3,7 @@ from typing import Set
 from talon import Module, Context, actions
 import sys
 
-default_alphabet = "alpha bravo charlie delta echo foxtrot golf hotel india july kilo lima mike novel oscar papa quebec romeo sierra tango uniform victor whiskey plex yankee zulu".split(
+default_alphabet = "alpha bravo charlie delta echo foxtrot golf hotel india july killroy lima mike novel oscar papa quebec romeo sierra tango uniform victor whiskey plex yankee zulu".split(
     " "
 )
 letters_string = "abcdefghijklmnopqrstuvwxyz"
@@ -187,6 +187,7 @@ alternate_keys = {
     'junk': 'backspace',
     'shit': 'backspace'
 }
+
 keys = {k: k for k in simple_keys}
 keys.update(alternate_keys)
 ctx.lists["self.special_key"] = keys
