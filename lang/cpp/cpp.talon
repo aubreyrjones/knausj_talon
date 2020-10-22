@@ -1,13 +1,13 @@
-mode: user.c
+mode: user.cplusplus
 mode: command
-and code.language: c
+and code.language: cplusplus
 -
 tag(): user.code_operators
 tag(): user.code_comment
 tag(): user.code_block_comment
 tag(): user.code_generic
 settings():
-    user.code_private_function_formatter = "SNAKE_CASE"
+    user.code_private_function_formatter = ""
     user.code_protected_function_formatter = "SNAKE_CASE"
     user.code_public_function_formatter = "SNAKE_CASE"
     user.code_private_variable_formatter = "SNAKE_CASE"
@@ -57,8 +57,8 @@ action(user.code_null): "NULL"
 action(user.code_is_null): " == NULL "
 action(user.code_is_not_null): " != NULL"
 action(user.code_state_if):
-    insert("if () {\n}\n")
-    key(up:2 left:3)
+    insert("if () {}")
+    key(left:4)
 action(user.code_state_else_if):
     insert("else if () {\n}\n")
     key(up:2 left:3)
