@@ -172,3 +172,5 @@ include <user.library>:
 int main:
     insert("int main()")
     edit.left()
+
+yolo: ";"
