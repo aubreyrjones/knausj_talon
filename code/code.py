@@ -182,6 +182,9 @@ class Actions:
     def code_operator_not_equal():
         """code_operator_not_equal"""
 
+    def code_operator_not():
+        """code_operator_not_equal"""
+
     def code_operator_greater_than():
         """code_operator_greater_than"""
 

@@ -21,7 +21,7 @@ op (plus | add): user.code_operator_addition()
 op (plus | add) equals: user.code_operator_addition_assignment()
 op (times | multiply): user.code_operator_multiplication()
 op (times | multiply) equals: user.code_operator_multiplication_assignment()
-op divide: user.code_operator_division()
+op (divide | over): user.code_operator_division()
 op divide equals: user.code_operator_division_assignment()
 op mod: user.code_operator_modulo()
 op mod equals: user.code_operator_modulo_assignment()
@@ -37,6 +37,7 @@ op mod equals: user.code_operator_modulo_assignment()
 (op | is) in: user.code_operator_in()
 
 #logical operators
+(op | logical) not: user.code_operator_not()
 (op | logical) and: user.code_operator_and()
 (op | logical) or: user.code_operator_or()
 

@@ -17,6 +17,7 @@ settings():
     #    user.use_stdint_datatypes = 1
 
 
+action(user.code_operator_not): "!"
 action(user.code_operator_indirection): "*"
 action(user.code_operator_address_of): "&"
 action(user.code_operator_structure_dereference): "->"
@@ -190,9 +191,16 @@ declare struct <user.text>:
 
 see out:
     insert("std::cout << ")
+see air:
+    insert("std::cerr << ")
+see air format:
+    insert("std::cerr << tfm::format(\"\")")
+    key(left:2)
 
 
 # Adjectives
+
+con ref: " const& "
 
 <user.cpp_modifiers>: "{cpp_modifiers}"
 
@@ -210,7 +218,7 @@ stud <user.cpp_std_templates>:
     insert("<>")
     key(left)
 
-
+glum scope: "glm::"
 glum <user.glm_types>: "glm::{glm_types} "
 
 label <user.text>:

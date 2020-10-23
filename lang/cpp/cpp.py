@@ -14,7 +14,6 @@ ctx.lists["self.cpp_integral"] = {
     "long": "int32_t",
     "long long": "int64_t",
     "integer": "int32_t",
-    "void": "void",
     "float": "float",
     "double": "double",
     "size type": "std::size_t",
@@ -26,7 +25,8 @@ ctx.lists["self.cpp_integral"] = {
     "you integer": "uint32_t",
 
     "auto": "auto",
-    "boolean": "bool"
+    "boolean": "bool",
+    "void": "void",
 }
 
 ctx.lists["self.cpp_std_templates"] = {
