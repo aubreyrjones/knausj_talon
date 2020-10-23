@@ -58,35 +58,36 @@ action(user.code_is_null): " == NULL "
 action(user.code_is_not_null): " != NULL"
 action(user.code_state_if):
     insert("if () {}")
-    key(left:4)
+    key(left)
+    key(enter)
+    key(up)
 action(user.code_state_else_if):
-    insert("else if () {\n}\n")
-    key(up:2 left:3)
+    insert("else if () {}")
+    key(left enter up right:5)
 action(user.code_state_else):
-    insert("else\n{\n}\n")
-    key(up:2)
+    insert("else {}")
+    key(left enter)
 action(user.code_state_switch):
-    insert("switch ()")
-    edit.left()
+    insert("switch () {}")
+    key(left enter up right:4)
 action(user.code_state_case):
-    insert("case \nbreak;")
-    edit.up()
-action(user.code_state_for): "for "
+    insert("case :")
+    key(enter)
+    insert("break;")
+    key(up left)
+action(user.code_state_for): 
+    "for () {}"
+    key(left enter up right)
 action(user.code_state_go_to): "goto "
 action(user.code_state_while):
-    insert("while ()")
-    edit.left()
+    insert("while () {}")
+    key(left enter up right:3)
 action(user.code_state_return): "return "
 action(user.code_break): "break;"
 action(user.code_next): "continue;"
 action(user.code_true): "true"
 action(user.code_false): "false"
 action(user.code_type_definition): "typedef "
-action(user.code_typedef_struct):
-    insert("typedef struct")
-    insert("{\n\n}")
-    edit.up()
-    key(tab)
 action(user.code_from_import): "using "
 action(user.code_include): insert("#include ")
 action(user.code_include_system):
@@ -105,6 +106,10 @@ action(user.code_block_comment):
 action(user.code_block_comment_prefix): "/*"
 action(user.code_block_comment_suffix): "*/"
 
+action(user.code_block):
+    insert("{}")
+    key(left enter)
+
 # XXX - make these generic in programming, as they will match cpp, etc
 state define: "#define "
 state undefine: "#undef "
@@ -117,32 +122,19 @@ state pre else if: "#elif "
 state pre end: "#endif "
 state pragma: "#pragma "
 
-
-state default: "default:\nbreak;"
+state default: 
+    "default:"
+    key("enter")
 state break: "break;"
-
-#control flow
-#best used with a push like command
-#the below example may not work in editors that automatically add the closing bracket
-#if so uncomment the two lines and comment out the rest accordingly
-push brackets:
-    edit.line_end()
-    insert("{")
-    key(enter)
-    insert("{}")
-    edit.left()
-    key(enter)
-    key(enter)
-    edit.up()
 
 # Declare variables or structs etc.
 # Ex. * int myList
-<user.variable> <phrase>:
-    insert("{variable} ")
-    insert(user.formatted_text(phrase, "PRIVATE_CAMEL_CASE,NO_SPACES"))
+#<user.variable> <phrase>:
+#    insert("{variable} ")
+#    insert(user.formatted_text(phrase, "PRIVATE_CAMEL_CASE,NO_SPACES"))
 
-<user.variable> <user.letter>:
-    insert("{variable} {letter} ")
+#<user.variable> <user.letter>:
+#    insert("{variable} {letter} ")
 
 # Ex. int * testFunction
 # TODO: these clearly don't want to use function_key, so what do they want to use?
@@ -156,21 +148,90 @@ push brackets:
 #     insert("{function} ")
 
 # Ex. (int *)
-cast to <user.cast>: "{cast}"
-standard cast to <user.stdint_cast>: "{stdint_cast}"
-<user.c_types>: "{c_types}"
-<user.c_pointers>: "{c_pointers}"
-<user.c_signed>: "{c_signed}"
-standard <user.stdint_types>: "{stdint_types}"
-call <user.c_functions>:
-    insert("{c_functions}()")
-    edit.left()
-#import standard libraries
-include <user.library>:
-    insert("#include <{library}>")
-    key(enter)
-int main:
-    insert("int main()")
-    edit.left()
+#cast to <user.cast>: "{cast}"
+#standard cast to <user.stdint_cast>: "{stdint_cast}"
+#<user.c_types>: "{c_types}"
+#<user.c_pointers>: "{c_pointers}"
+#<user.c_signed>: "{c_signed}"
+#standard <user.stdint_types>: "{stdint_types}"
+#call <user.c_functions>:
+#    insert("{c_functions}()")
+#    edit.left()
+##import standard libraries
+#include <user.library>:
+#    insert("#include <{library}>")
+#    key(enter)
+#int main:
+#    insert("int main()")
+#    edit.left()
 
-yolo: ";"
+yolo: ";\n"
+olive: "; "
+increment: "++"
+decrement: "--"
+scope: "::"
+
+ref: "&"
+return: "return "
+
+declare class <user.text>: 
+    insert("class ")
+    insert(user.formatted_text(text, "PUBLIC_CAMEL_CASE,NO_SPACES"))
+    insert(" {};")
+    key(left:2 enter)
+
+declare struct <user.text>: 
+    insert("struct ")
+    insert(user.formatted_text(text, "SNAKE_CASE,NO_SPACES"))
+    insert(" {};")
+    key(left:2 enter)
+
+# Verbs
+
+see out:
+    insert("std::cout << ")
+
+
+# Adjectives
+
+<user.cpp_modifiers>: "{cpp_modifiers}"
+
+# Nouns.
+
+<user.cpp_integral>: "{cpp_integral} "
+stud scope: "std::"
+
+stud string: "std::string"
+stud string view: "std::string_view"
+
+stud <user.cpp_std_templates>: 
+    insert("std::")
+    insert(cpp_std_templates)
+    insert("<>")
+    key(left)
+
+
+glum <user.glm_types>: "glm::{glm_types} "
+
+label <user.text>:
+    insert(user.formatted_text(text, "SNAKE_CASE,NO_SPACES"))
+    insert(":")
+    key(enter)
+
+class <user.text>:
+    insert(user.formatted_text(text, "PUBLIC_CAMEL_CASE,NO_SPACES"))
+
+meth <user.text>:
+    insert(user.formatted_text(text, "PRIVATE_CAMEL_CASE,NO_SPACES"))
+
+struct <user.text>:
+    insert(user.formatted_text(text, "SNAKE_CASE,NO_SPACES"))
+
+field <user.text>:
+    insert(user.formatted_text(text, "PRIVATE_CAMEL_CASE,NO_SPACES"))
+
+local <user.text>:
+    insert(user.formatted_text(text, "PRIVATE_CAMEL_CASE,NO_SPACES"))
+
+funk <user.text>:
+    insert(user.formatted_text(text, "SNAKE_CASE,NO_SPACES"))

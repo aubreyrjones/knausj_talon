@@ -169,6 +169,7 @@ formatters_words = {
     # "speak": formatters_dict["NOOP"],
     "string": formatters_dict["SINGLE_QUOTED_STRING"],
     "title": formatters_dict["CAPITALIZE_ALL_WORDS"],
+    #"classy": formatters_dict["DOT_SNAKE"]
     # disable a few formatters for now
     # "tree": formatters_dict["FIRST_THREE"],
     # "quad": formatters_dict["FIRST_FOUR"],

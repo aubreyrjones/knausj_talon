@@ -17,14 +17,14 @@ scroll up:
   key(shift-pageup)
 scroll down:
   key(shift-pagedown)
-run last:
-  key(up)
-  key(enter)
-rerun <user.text>:
-  key(ctrl-r)
-  insert(text)
-rerun search:
-  key(ctrl-r)
+#run last:
+#  key(up)
+#  key(enter)
+#rerun <user.text>:
+#  key(ctrl-r)
+#  insert(text)
+#rerun search:
+#  key(ctrl-r)
 #kill all:
 #  key(ctrl-c)
 
@@ -48,34 +48,3 @@ action(app.window_open):
   key(ctrl-shift-n)
 go tab <number>:
   key("alt-{number}")
-
-see deer: "cd "
-
-up deer: 
-  "cd .."
-  key("enter")
-
-push deer:
-  "pushd ."
-  key("enter")
-
-pop deer:
-  "popd"
-  key("enter")
-
-list deer:
-  "ls -a"
-  key("enter")
-
-yolo:
-  key("enter")
-
-super user:
-  "sudo "
-
-cut line:
-  key(ctrl-k)
-
-yank line:
-  key(ctrl-y)
-
