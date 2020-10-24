@@ -173,10 +173,10 @@ formatters_words = {
     # "speak": formatters_dict["NOOP"],
     "string": formatters_dict["SINGLE_QUOTED_STRING"],
     "title": formatters_dict["CAPITALIZE_ALL_WORDS"],
-    "definite": formatters_dict["PUBLIC_SNAKE_CASE"]
+    "definite": formatters_dict["PUBLIC_SNAKE_CASE"],
     # disable a few formatters for now
-    # "tree": formatters_dict["FIRST_THREE"],
-    # "quad": formatters_dict["FIRST_FOUR"],
+    "tree": formatters_dict["FIRST_THREE"],
+    "quad": formatters_dict["FIRST_FOUR"],
     # "fiver": formatters_dict["FIRST_FIVE"],
 }
 

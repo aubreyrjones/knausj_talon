@@ -193,7 +193,7 @@ copy line down: user.vscode("editor.action.copyLinesDownAction")
 copy line up: user.vscode("editor.action.copyLinesUpAction")
 
 #Expand/Shrink AST Selection
-select less: user.vscode("editor.action.smartSelect.shrink")
-select (more|this): user.vscode("editor.action.smartSelect.expand")
+(select | grab) less: user.vscode("editor.action.smartSelect.shrink")
+(select | grab) that: user.vscode("editor.action.smartSelect.expand")
   
   

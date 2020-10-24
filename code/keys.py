@@ -186,7 +186,6 @@ alternate_keys = {
     "forward delete": "delete",
     'junk': 'backspace',
     'shit': 'backspace',
-    'hut': 'space',
     'dent': 'tab' 
 }
 

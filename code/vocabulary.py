@@ -40,7 +40,7 @@ _capitalize_defaults = [
 # Default words that need to be remapped.
 _word_map_defaults = {
     # E.g:
-    # "cash": "cache",
+    "corps": "core",
 }
 
 # Default words that should be added to Talon's vocabulary.

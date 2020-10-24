@@ -1,6 +1,6 @@
 tag: user.mouse_grid_enabled
 -
-M grid:
+mega grid:
     user.grid_activate()
 
 grid win:

@@ -37,7 +37,7 @@ extension_lang_map = {
     "cs": "csharp",
     "gdb": "gdb",
     "go": "go",
-    "h": "c",
+    "h": "cplusplus",
     "hpp": "cplusplus",
     "js": "javascript",
     "json": "json",

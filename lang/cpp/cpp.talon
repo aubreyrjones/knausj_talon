@@ -166,14 +166,19 @@ state break: "break;"
 #    insert("int main()")
 #    edit.left()
 
+# exclamations
+
 yolo: ";\n"
 olive: "; "
 increment: "++"
 decrement: "--"
 scope: "::"
+hut: ", "
 
 ref: "&"
 return: "return "
+
+# declarations
 
 declare class <user.text>: 
     insert("class ")
@@ -183,6 +188,12 @@ declare class <user.text>:
 
 declare struct <user.text>: 
     insert("struct ")
+    insert(user.formatted_text(text, "SNAKE_CASE,NO_SPACES"))
+    insert(" {};")
+    key(left:2 enter)
+
+declare name space <user.text>:
+    insert("namespace ")
     insert(user.formatted_text(text, "SNAKE_CASE,NO_SPACES"))
     insert(" {};")
     key(left:2 enter)
@@ -206,20 +217,25 @@ con ref: " const& "
 
 # Nouns.
 
+<user.cpp_namespaced_type> : "{cpp_namespaced_type} "
+
 <user.cpp_integral>: "{cpp_integral} "
-stud scope: "std::"
+#stud scope: "std::"
 
-stud string: "std::string"
-stud string view: "std::string_view"
+#stud string: "std::string"
+#stud string view: "std::string_view"
 
-stud <user.cpp_std_templates>: 
-    insert("std::")
-    insert(cpp_std_templates)
-    insert("<>")
-    key(left)
+#stud <user.cpp_std_templates>: 
+#    insert("std::")
+#    insert(cpp_std_templates)
+#    insert("<>")
+#    key(left)
 
-glum scope: "glm::"
-glum <user.glm_types>: "glm::{glm_types} "
+#glum scope: "glm::"
+#glum <user.glm_types>: "glm::{glm_types} "
+
+#gabby scope: "gba::"
+#gabby <user.gba_types>: "gba::{gba_types} "
 
 label <user.text>:
     insert(user.formatted_text(text, "SNAKE_CASE,NO_SPACES"))
