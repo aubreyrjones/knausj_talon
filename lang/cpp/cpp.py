@@ -5,30 +5,25 @@ import json
 import pathlib
 import sqlite3
 
+##
 ## Configuration.
-
-namespaced_templates = {}
-
+##
 json_namespace_table = {}
 json_codeword_table = {}
 
+taxonomy_path = pathlib.Path(__file__).parent / 'taxonomy'
+
 ## Load namespaces from JSON file.
 def load_json(path):
+    loaded_namespaces = []
     with resource.open(str(pathlib.Path('taxonomy') / path), 'r') as f:
         j = json.load(f)
         for ns in j:
             ns['joiner'] = ns.get('joiner', '::')
             json_namespace_table[ns['namespace']] = ns
             json_codeword_table[ns['codeword']] = ns
-
-taxonomy_path = pathlib.Path(__file__).parent / 'taxonomy'
-
-def on_json_change(path, exists):
-    newfile = pathlib.Path(path).relative_to(taxonomy_path)
-    if newfile.exists():
-        load_json(newfile)   
-
-fs.watch(str(taxonomy_path), on_json_change)
+            loaded_namespaces.append(ns)
+    return loaded_namespaces
 
 json_files = os.listdir(taxonomy_path)
 
@@ -37,30 +32,27 @@ for f in json_files:
         continue
     load_json(f)
 
-## Implementation.
+
+##
+# Implementation.
+##
 
 mod = Module()
-mod.setting(
-    "use_stdint_datatypes ", type=int, default=1, desc="beep",
-)
-
 ctx = Context()
 
 ctx.lists["self.cpp_integral"] = {
     "char": "char",
     "byte": "int8_t",
     "short": "int16_t",
-    "long": "int32_t",
-    "long long": "int64_t",
     "integer": "int32_t",
+    "long": "int64_t",
     "float": "float",
     "double": "double",
     "size type": "std::size_t",
 
     "you byte": "uint8_t",
     "you short": "uint16_t",
-    "you long": "uint32_t",
-    "you long long": "uint64_t",
+    "you long": "uint64_t",
     "you integer": "uint32_t",
 
     "auto": "auto",
@@ -97,7 +89,7 @@ def construct_types_rule(suffix = "types"):
 
 # Add a list from a particular namespace
 def add_namespace_list(ns, json_key, list_suffix):
-    sym = namespace_list_symbol(ns['namespace'], list_suffix, prefix_self = False)
+    sym = namespace_list_symbol(ns['namespace'], suffix=list_suffix, prefix_self = False)
     
     list_to_add = {}
     try:
@@ -108,18 +100,34 @@ def add_namespace_list(ns, json_key, list_suffix):
     ctx.lists["self." + sym] = list_to_add
     mod.list(sym, desc="C++ types in the {} namespace.".format(ns['namespace']))
 
-def get_namespaced_noun(ns_codeword, noun, noun_type):
+# Get a noun, properly concatenated with its namespace.
+def get_namespaced_noun(ns_codeword, noun_codeword, noun_type):
     ns = json_codeword_table[ns_codeword]
-    type_parse = ns[noun_type][noun]
+    type_parse = ns[noun_type][noun_codeword]
     return ns['joiner'].join((ns['namespace'], type_parse))
+
+
+##
+# Startup
+##
 
 # Add all the known lists for all the loaded namespaces
 for ns in json_codeword_table.values():
     add_namespace_list(ns, 'names', 'types')
     add_namespace_list(ns, 'templates', 'templates')
 
+# Set up watch for new files
+# TODO this doesn't actually redefine the grammar, so it doesn't really work without forcing a reload some other way.
+def on_json_change(path, exists):
+    newfile = pathlib.Path(path).relative_to(taxonomy_path)
+    if newfile.exists():
+        loaded_namespaces = load_json(newfile)
+fs.watch(str(taxonomy_path), on_json_change)
 
+
+##
 # Module/Context declarations
+##
 
 @mod.capture
 def cpp_known_namespaces(m) -> Dict:
@@ -163,6 +171,7 @@ def cpp_modifiers(m) -> str:
 @ctx.capture('self.cpp_modifiers', rule = "{self.cpp_modifiers}+")
 def cpp_modifiers(m) -> str:
     return " ".join(m.cpp_modifiers_list)
+
 
 @mod.action_class
 class Actions:

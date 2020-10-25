@@ -13,8 +13,6 @@ settings():
     user.code_private_variable_formatter = "SNAKE_CASE"
     user.code_protected_variable_formatter = "SNAKE_CASE"
     user.code_public_variable_formatter = "SNAKE_CASE"
-    # whether or not to use uint_8 style datatypes
-    #    user.use_stdint_datatypes = 1
 
 
 action(user.code_operator_not): "!"
@@ -192,7 +190,7 @@ con ref: " const& "
 <user.cpp_integral>: "{cpp_integral} "
 <user.cpp_namespaced_type> : "{cpp_namespaced_type} "
 
-<user.cpp_known_namespaces>: insert(user.cpp_naked_namespace(cpp_known_namespaces))
+state <user.cpp_known_namespaces>: insert(user.cpp_naked_namespace(cpp_known_namespaces))
 <user.cpp_known_namespaces> scope : insert(user.cpp_namespace_with_joiner(cpp_known_namespaces))
 
 <user.cpp_namespaced_template>: 
