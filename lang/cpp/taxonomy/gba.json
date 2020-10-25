@@ -1,0 +1,18 @@
+[
+    {
+        "namespace" : "gba",
+        "codeword" : "gabby",
+        "types" : {
+            "vec": "vec2",
+            "bee two": "bvec2",
+            "as two": "svec2",
+            
+            "you vec": "uvec2",
+            "you bee two": "ubvec2",
+            "you as two": "usvec2",
+            
+            "dim": "dim",
+            "big dim": "bigdim"
+        }
+    }
+]

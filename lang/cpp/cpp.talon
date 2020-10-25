@@ -128,43 +128,6 @@ state default:
     key("enter")
 state break: "break;"
 
-# Declare variables or structs etc.
-# Ex. * int myList
-#<user.variable> <phrase>:
-#    insert("{variable} ")
-#    insert(user.formatted_text(phrase, "PRIVATE_CAMEL_CASE,NO_SPACES"))
-
-#<user.variable> <user.letter>:
-#    insert("{variable} {letter} ")
-
-# Ex. int * testFunction
-# TODO: these clearly don't want to use function_key, so what do they want to use?
-# fun <user.function> <phrase>:
-#     insert("{function} ")
-#     insert(user.formatted_text(phrase, "PRIVATE_CAMEL_CASE,NO_SPACES"))
-#     insert("()")
-#     edit.left()
-
-# <user.function>:
-#     insert("{function} ")
-
-# Ex. (int *)
-#cast to <user.cast>: "{cast}"
-#standard cast to <user.stdint_cast>: "{stdint_cast}"
-#<user.c_types>: "{c_types}"
-#<user.c_pointers>: "{c_pointers}"
-#<user.c_signed>: "{c_signed}"
-#standard <user.stdint_types>: "{stdint_types}"
-#call <user.c_functions>:
-#    insert("{c_functions}()")
-#    edit.left()
-##import standard libraries
-#include <user.library>:
-#    insert("#include <{library}>")
-#    key(enter)
-#int main:
-#    insert("int main()")
-#    edit.left()
 
 # exclamations
 
@@ -172,7 +135,7 @@ yolo: ";\n"
 olive: "; "
 increment: "++"
 decrement: "--"
-scope: "::"
+#scope: "::"
 hut: ", "
 
 ref: "&"
@@ -198,10 +161,18 @@ declare name space <user.text>:
     insert(" {};")
     key(left:2 enter)
 
+declare template:
+    insert("template <>")
+    key(left)
+
+
 # Verbs
 
 see out:
     insert("std::cout << ")
+see out format:
+    insert("std::cout << tfm::format(\"\")")
+    key(left:2)
 see air:
     insert("std::cerr << ")
 see air format:
@@ -215,27 +186,20 @@ con ref: " const& "
 
 <user.cpp_modifiers>: "{cpp_modifiers}"
 
+
 # Nouns.
 
+<user.cpp_integral>: "{cpp_integral} "
 <user.cpp_namespaced_type> : "{cpp_namespaced_type} "
 
-<user.cpp_integral>: "{cpp_integral} "
-#stud scope: "std::"
+#<user.cpp_known_namespaces>: "{cpp_known_namespaces}"
+<user.cpp_known_namespaces> scope : insert(user.cpp_namespace_with_joiner(cpp_known_namespaces))
 
-#stud string: "std::string"
-#stud string view: "std::string_view"
+temple <user.cpp_namespaced_type>: 
+    insert(cpp_namespaced_type)
+    insert("<>")
+    key(left)
 
-#stud <user.cpp_std_templates>: 
-#    insert("std::")
-#    insert(cpp_std_templates)
-#    insert("<>")
-#    key(left)
-
-#glum scope: "glm::"
-#glum <user.glm_types>: "glm::{glm_types} "
-
-#gabby scope: "gba::"
-#gabby <user.gba_types>: "gba::{gba_types} "
 
 label <user.text>:
     insert(user.formatted_text(text, "SNAKE_CASE,NO_SPACES"))

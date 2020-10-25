@@ -1,0 +1,38 @@
+[
+    {
+        "namespace" : "std",
+        "codeword" : "stud",
+        "types" : {
+            "optional": "optional",
+            "vector": "vector",
+            "unique pointer": "unique_ptr",
+            "shared pointer": "shared_ptr",
+            "weak pointer": "weak_ptr"
+        }
+    },
+    {
+        "namespace" : "glm",
+        "codeword" : "glum",
+        "types" : {
+            "vec two": "vec2",
+            "vec three": "vec3",
+            "vec four": "vec4",
+            
+            "int two": "i32vec2",
+            "int three": "i32vec3",
+            "int four": "i32vec4",
+            
+            "you int two": "u32vec2",
+            "you int three": "u32vec3",
+            "you int four": "u32vec4",
+            
+            "long two": "i64vec2",
+            "long three": "i64vec3",
+            "long four": "i64vec4",
+            
+            "you long two": "u64vec2",
+            "you long three": "u64vec3",
+            "you long four": "u64vec4"
+        }
+    }
+]

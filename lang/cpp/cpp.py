@@ -1,17 +1,18 @@
 from talon import Context, Module, actions, settings
+from typing import Tuple
 
 ## Configuration.
 
 namespaced_types = {
     "stud" : 
-        ("std", 
+        ("std", "::",
             {"optional": "optional",
              "vector": "vector",
              "unique pointer": "unique_ptr",
              "shared pointer": "shared_ptr",
              "weak pointer": "weak_ptr"}),
     "glum" :
-        ("glm",
+        ("glm", "::",
             {"vec two": "vec2",
             "vec three": "vec3",
             "vec four": "vec4",
@@ -32,7 +33,7 @@ namespaced_types = {
             "you long three": "u64vec3",
             "you long four": "u64vec4"}),
     "gabby" :
-        ("gba",
+        ("gba", "::",
             {"vec": "vec2",
             "bee two": "bvec2",
             "as two": "svec2",
@@ -42,8 +43,13 @@ namespaced_types = {
             "you as two": "usvec2",
 
             "dim": "dim",
-            "big dim": "bigdim"})
+            "big dim": "bigdim"}),
+    "gee cry" :
+        ("gcry", "_",
+            {})
 }
+
+namespace_meta = {}
 
 ## Implementation.
 
@@ -76,36 +82,6 @@ ctx.lists["self.cpp_integral"] = {
     "void": "void",
 }
 
-ctx.lists["self.cpp_std_templates"] = {
-    "optional": "optional",
-    "vector": "vector",
-    "unique pointer": "unique_ptr",
-    "shared pointer": "shared_ptr",
-    "weak pointer": "weak_ptr"
-}
-
-ctx.lists["self.glm_types"] = {
-    "vec two": "vec2",
-    "vec three": "vec3",
-    "vec four": "vec4",
-
-    "int two": "i32vec2",
-    "int three": "i32vec3",
-    "int four": "i32vec4",
-
-    "you int two": "u32vec2",
-    "you int three": "u32vec3",
-    "you int four": "u32vec4",
-
-    "long two": "i64vec2",
-    "long three": "i64vec3",
-    "long four": "i64vec4",
-
-    "you long two": "u64vec2",
-    "you long three": "u64vec3",
-    "you long four": "u64vec4"
-}
-
 ctx.lists["self.cpp_modifiers"] = {
     "constant": "const",
     "inline": "inline",
@@ -114,18 +90,14 @@ ctx.lists["self.cpp_modifiers"] = {
     "static": "static"
 }
 
-ctx.lists["self.gba_types"] = {
-    "vec": "vec2",
-    "bee two": "bvec2",
-    "as two": "svec2",
+def codeword_namespace_list():
+    list_rule = {}
+    for word, namespace in namespaced_types.items():
+        list_rule[word] = namespace[0]
+    return list_rule
 
-    "you vec": "uvec2",
-    "you bee two": "ubvec2",
-    "you as two": "usvec2",
-
-    "dim": "dim",
-    "big dim": "bigdim"
-}
+ctx.lists["self.cpp_known_namespaces"] = codeword_namespace_list()
+mod.list("cpp_known_namespaces", desc = "Known C++ namespaces.")
 
 # Get the list name for the given namespace name.
 def namespace_list_symbol(namespace_name, prefixSelf = False):
@@ -135,13 +107,15 @@ def namespace_list_symbol(namespace_name, prefixSelf = False):
 def namespaced_types_rule():
     return " | ".join(map(lambda chi: "{} {{{}}}".format(chi[0], namespace_list_symbol(chi[1][0], True)), namespaced_types.items()))
 
-print(namespaced_types_rule())
-
-# Add all the namespaced types to the grammar.
+# Add all the namespaced types to the grammar and secondary map.
 for word, namespace in namespaced_types.items():
     sym = namespace_list_symbol(namespace[0])
-    ctx.lists["self." + sym] = namespace[1]
+    namespace_meta[namespace[0]] = namespace
+    ctx.lists["self." + sym] = namespace[2]
     mod.list(sym, desc="C++ types in the {} namespace.".format(namespace[0]))
+
+
+# Module declarations
 
 @mod.capture
 def cpp_namespaced_type(m) -> str:
@@ -149,13 +123,10 @@ def cpp_namespaced_type(m) -> str:
 
 @ctx.capture(rule=namespaced_types_rule())
 def cpp_namespaced_type(m) -> str:
-    print(m.text)
-    return "YOLOLO"
+    ns = namespaced_types[str(m[0])]
+    return "{}{}{}".format(ns[0], ns[1], ns[2][str(m[1])])
 
 mod.list("cpp_integral", desc="C++ integral types.")
-mod.list("cpp_std_templates", desc="C++ templates in the std namespace.")
-mod.list("glm_types", desc="C++ types in the glm namespace")
-mod.list("gba_types", desc="C++ types in the gba namespace")
 mod.list("cpp_modifiers", desc="C++ modifiers.")
 
 @mod.capture
@@ -167,36 +138,32 @@ def cpp_integral(m) -> str:
     return m.cpp_integral
 
 @mod.capture
-def cpp_std_templates(m) -> str:
-    "Returns a string"
-
-@ctx.capture(rule = "{self.cpp_std_templates}")
-def cpp_std_templates(m) -> str:
-    return m.cpp_std_templates
-
-@mod.capture
-def glm_types(m) -> str:
-    "Returns a string"
-
-@ctx.capture(rule = "{self.glm_types}")
-def glm_types(m) -> str:
-    return m.glm_types
-
-@mod.capture
-def gba_types(m) -> str:
-    "Returns a string"
-
-@ctx.capture(rule = "{self.gba_types}")
-def gba_types(m) -> str:
-    return m.gba_types
-
-@mod.capture
 def cpp_modifiers(m) -> str:
     "Returns a string"
 
 @ctx.capture(rule = "{self.cpp_modifiers}+")
 def cpp_modifiers(m) -> str:
     return " ".join(m.cpp_modifiers_list)
+
+@mod.capture
+def cpp_known_namespaces(m) -> str:
+    "Returns a string"
+
+@ctx.capture(rule="{self.cpp_known_namespaces}")
+def cpp_known_namespaces(m) -> Tuple[str, str]:
+    joiner = namespace_meta[m.cpp_known_namespaces][1]
+    return (m.cpp_known_namespaces, joiner)
+
+
+@mod.action_class
+class Actions:
+    def cpp_namespace_with_joiner(ns: Tuple[str, ...]) -> str:
+        """Returns a namespace and its joiner, e.g. 'std::' """
+        return ns[0] + ns[1]
+    def cpp_naked_namespace(ns: Tuple[str, ...]) -> str:
+        """Gets only the namespace part of a namespace."""
+        return ns[0]
+    pass
 
 # mod.list("c_signed", desc="Common C datatype signed modifiers")
 # mod.list("c_types", desc="Common C types")
