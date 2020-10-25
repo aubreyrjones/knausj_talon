@@ -1,4 +1,4 @@
-from talon import Context, Module, actions, settings, resource
+from talon import Context, Module, actions, settings, resource, fs
 from typing import Tuple
 import os
 import json
@@ -11,20 +11,30 @@ namespaced_types = {
 
 ## Load namespaces from JSON file.
 def load_json(path):
-    with resource.open(path, 'r') as f:
+    with resource.open(str(pathlib.Path('taxonomy') / path), 'r') as f:
         j = json.load(f)
         for ns in j:
             namespaced_types[ns['codeword']] = (ns['namespace'], ns.get('joiner', '::'), ns['names'])
 
+taxonomy_path = pathlib.Path(__file__).parent / 'taxonomy'
 
-json_files = os.listdir(pathlib.Path(__file__).parent / 'taxonomy')
+def on_json_change(path, exists):
+    newfile = pathlib.Path(path).relative_to(taxonomy_path)
+    if newfile.exists():
+        load_json(newfile)   
+
+fs.watch(str(taxonomy_path), on_json_change)
+
+json_files = os.listdir(taxonomy_path)
 
 for f in json_files:
     if not f.endswith(".json"):
         continue
-    load_json('taxonomy/' + f)
+    load_json(f)
 
 namespace_meta = {}
+
+
 
 ## Implementation.
 
