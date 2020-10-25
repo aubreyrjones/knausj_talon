@@ -1,53 +1,28 @@
-from talon import Context, Module, actions, settings
+from talon import Context, Module, actions, settings, resource
 from typing import Tuple
+import os
+import json
+import pathlib
 
 ## Configuration.
 
 namespaced_types = {
-    "stud" : 
-        ("std", "::",
-            {"optional": "optional",
-             "vector": "vector",
-             "unique pointer": "unique_ptr",
-             "shared pointer": "shared_ptr",
-             "weak pointer": "weak_ptr"}),
-    "glum" :
-        ("glm", "::",
-            {"vec two": "vec2",
-            "vec three": "vec3",
-            "vec four": "vec4",
-
-            "int two": "i32vec2",
-            "int three": "i32vec3",
-            "int four": "i32vec4",
-
-            "you int two": "u32vec2",
-            "you int three": "u32vec3",
-            "you int four": "u32vec4",
-
-            "long two": "i64vec2",
-            "long three": "i64vec3",
-            "long four": "i64vec4",
-
-            "you long two": "u64vec2",
-            "you long three": "u64vec3",
-            "you long four": "u64vec4"}),
-    "gabby" :
-        ("gba", "::",
-            {"vec": "vec2",
-            "bee two": "bvec2",
-            "as two": "svec2",
-
-            "you vec": "uvec2",
-            "you bee two": "ubvec2",
-            "you as two": "usvec2",
-
-            "dim": "dim",
-            "big dim": "bigdim"}),
-    "gee cry" :
-        ("gcry", "_",
-            {})
 }
+
+## Load namespaces from JSON file.
+def load_json(path):
+    with resource.open(path, 'r') as f:
+        j = json.load(f)
+        for ns in j:
+            namespaced_types[ns['codeword']] = (ns['namespace'], ns.get('joiner', '::'), ns['names'])
+
+
+json_files = os.listdir(pathlib.Path(__file__).parent / 'taxonomy')
+
+for f in json_files:
+    if not f.endswith(".json"):
+        continue
+    load_json('taxonomy/' + f)
 
 namespace_meta = {}
 

@@ -2,7 +2,7 @@
     {
         "namespace" : "gba",
         "codeword" : "gabby",
-        "types" : {
+        "names" : {
             "vec": "vec2",
             "bee two": "bvec2",
             "as two": "svec2",

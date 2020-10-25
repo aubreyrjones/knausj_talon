@@ -2,7 +2,7 @@
     {
         "namespace" : "std",
         "codeword" : "stud",
-        "types" : {
+        "names" : {
             "optional": "optional",
             "vector": "vector",
             "unique pointer": "unique_ptr",
@@ -13,7 +13,7 @@
     {
         "namespace" : "glm",
         "codeword" : "glum",
-        "types" : {
+        "names" : {
             "vec two": "vec2",
             "vec three": "vec3",
             "vec four": "vec4",
