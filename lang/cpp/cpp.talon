@@ -195,8 +195,8 @@ con ref: " const& "
 #<user.cpp_known_namespaces>: "{cpp_known_namespaces}"
 <user.cpp_known_namespaces> scope : insert(user.cpp_namespace_with_joiner(cpp_known_namespaces))
 
-temple <user.cpp_namespaced_type>: 
-    insert(cpp_namespaced_type)
+<user.cpp_namespaced_template>: 
+    insert(cpp_namespaced_template)
     insert("<>")
     key(left)
 
