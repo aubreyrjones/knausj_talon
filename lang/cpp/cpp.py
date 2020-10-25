@@ -3,11 +3,11 @@ from typing import Tuple
 import os
 import json
 import pathlib
+import sqlite3
 
 ## Configuration.
 
-namespaced_types = {
-}
+namespaced_types = {}
 
 ## Load namespaces from JSON file.
 def load_json(path):
@@ -34,6 +34,10 @@ for f in json_files:
 
 namespace_meta = {}
 
+
+## Establish cupboard connection
+cupboard_database_file = taxonomy_path / 'cupboard.sqlite3'
+print(cupboard_database_file)
 
 
 ## Implementation.
@@ -150,120 +154,3 @@ class Actions:
         return ns[0]
     pass
 
-# mod.list("c_signed", desc="Common C datatype signed modifiers")
-# mod.list("c_types", desc="Common C types")
-# mod.list("c_libraries", desc="Standard C library")
-# mod.list("c_functions", desc="Standard C functions")
-# mod.list("stdint_types", desc="Common stdint C types")
-# mod.list("stdint_signed", desc="Common stdint C datatype signed modifiers")
-
-
-@mod.capture
-def cast(m) -> str:
-    "Returns a string"
-
-
-@mod.capture
-def stdint_cast(m) -> str:
-    "Returns a string"
-
-
-@mod.capture
-def c_pointers(m) -> str:
-    "Returns a string"
-
-
-@mod.capture
-def c_signed(m) -> str:
-    "Returns a string"
-
-
-
-
-@mod.capture
-def c_functions(m) -> str:
-    "Returns a string"
-
-
-@mod.capture
-def stdint_types(m) -> str:
-    "Returns a string"
-
-
-@mod.capture
-def stdint_signed(m) -> str:
-    "Returns a string"
-
-
-@mod.capture
-def variable(m) -> str:
-    "Returns a string"
-
-
-@mod.capture
-def function(m) -> str:
-    "Returns a string"
-
-
-@mod.capture
-def library(m) -> str:
-    "Returns a string"
-
-
-@ctx.capture(rule="{self.c_pointers}")
-def c_pointers(m) -> str:
-    return m.c_pointers
-
-
-@ctx.capture(rule="{self.c_signed}")
-def c_signed(m) -> str:
-    return m.c_signed
-
-
-@ctx.capture(rule="{self.c_types}")
-def c_types(m) -> str:
-    return m.c_types
-
-
-@ctx.capture(rule="{self.c_types}")
-def c_types(m) -> str:
-    return m.c_types
-
-
-@ctx.capture(rule="{self.c_functions}")
-def c_functions(m) -> str:
-    return m.c_functions
-
-
-@ctx.capture(rule="{self.stdint_types}")
-def stdint_types(m) -> str:
-    return m.stdint_types
-
-
-@ctx.capture(rule="{self.stdint_signed}")
-def stdint_signed(m) -> str:
-    return m.stdint_signed
-
-
-@ctx.capture(rule="{self.c_libraries}")
-def library(m) -> str:
-    return m.c_libraries
-
-
-# NOTE: we purposely we don't have a space after signed, to faciltate stdint
-# style uint8_t constructions
-@ctx.capture(rule="[<self.c_signed>]<self.c_types> [<self.c_pointers>+]")
-def cast(m) -> str:
-    return "(" + " ".join(list(m)) + ")"
-
-
-# NOTE: we purposely we don't have a space after signed, to faciltate stdint
-# style uint8_t constructions
-@ctx.capture(rule="[<self.stdint_signed>]<self.stdint_types> [<self.c_pointers>+]")
-def stdint_cast(m) -> str:
-    return "(" + "".join(list(m)) + ")"
-
-
-@ctx.capture(rule="[<self.c_signed>]<self.c_types>[<self.c_pointers>]")
-def variable(m) -> str:
-    return " ".join(list(m))
