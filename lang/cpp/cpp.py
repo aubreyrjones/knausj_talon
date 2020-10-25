@@ -1,5 +1,5 @@
 from talon import Context, Module, actions, settings, resource, fs
-from typing import Tuple
+from typing import Tuple, Dict
 import os
 import json
 import pathlib
@@ -7,14 +7,19 @@ import sqlite3
 
 ## Configuration.
 
-namespaced_types = {}
+namespaced_templates = {}
+
+json_namespace_table = {}
+json_codeword_table = {}
 
 ## Load namespaces from JSON file.
 def load_json(path):
     with resource.open(str(pathlib.Path('taxonomy') / path), 'r') as f:
         j = json.load(f)
         for ns in j:
-            namespaced_types[ns['codeword']] = (ns['namespace'], ns.get('joiner', '::'), ns['names'])
+            ns['joiner'] = ns.get('joiner', '::')
+            json_namespace_table[ns['namespace']] = ns
+            json_codeword_table[ns['codeword']] = ns
 
 taxonomy_path = pathlib.Path(__file__).parent / 'taxonomy'
 
@@ -31,14 +36,6 @@ for f in json_files:
     if not f.endswith(".json"):
         continue
     load_json(f)
-
-namespace_meta = {}
-
-
-## Establish cupboard connection
-cupboard_database_file = taxonomy_path / 'cupboard.sqlite3'
-print(cupboard_database_file)
-
 
 ## Implementation.
 
@@ -79,38 +76,51 @@ ctx.lists["self.cpp_modifiers"] = {
     "static": "static"
 }
 
-def codeword_namespace_list():
+# Extract the raw codeword -> namespace list.
+def extract_codeword_namespace():
     list_rule = {}
-    for word, namespace in namespaced_types.items():
-        list_rule[word] = namespace[0]
+    for word in json_codeword_table:
+        list_rule[word] = json_codeword_table[word]['namespace']
     return list_rule
 
-ctx.lists["self.cpp_known_namespaces"] = codeword_namespace_list()
+ctx.lists["self.cpp_known_namespaces"] = extract_codeword_namespace()
 mod.list("cpp_known_namespaces", desc = "Known C++ namespaces.")
 
 # Get the list name for the given namespace name.
-def namespace_list_symbol(namespace_name, prefixSelf = False):
-    return ("self." if prefixSelf else "") + "cpp_{}_types".format(namespace_name)
+def namespace_list_symbol(namespace_name, suffix = "types", prefix_self = False):
+    return ("self." if prefix_self else "") + "cpp_{}_{}".format(namespace_name, suffix)
 
-# Get the unified capture rule for all the namespaced types.
-def namespaced_types_rule():
-    return " | ".join(map(lambda chi: "{} {{{}}}".format(chi[0], namespace_list_symbol(chi[1][0], True)), namespaced_types.items()))
+# Construct an or-separated rule to capture each list of types.
+def construct_types_rule(suffix = "types"):
+    mapped = map(lambda ns: "{} {{{}}}".format(ns['codeword'], namespace_list_symbol(ns['namespace'], suffix=suffix, prefix_self=True)), json_codeword_table.values())
+    return " | ".join(mapped)
 
-# Add all the namespaced types to the grammar and secondary map.
-for word, namespace in namespaced_types.items():
-    sym = namespace_list_symbol(namespace[0])
-    namespace_meta[namespace[0]] = namespace
-    ctx.lists["self." + sym] = namespace[2]
-    mod.list(sym, desc="C++ types in the {} namespace.".format(namespace[0]))
+# Add a list from a particular namespace
+def add_namespace_list(ns, json_key, list_suffix):
+    sym = namespace_list_symbol(ns['namespace'], list_suffix, prefix_self = False)
+    
+    list_to_add = {}
+    try:
+        list_to_add = ns[json_key]
+    except KeyError:
+        pass
+
+    ctx.lists["self." + sym] = list_to_add
+    mod.list(sym, desc="C++ types in the {} namespace.".format(ns['namespace']))
+
+# Add all the known lists for all the loaded namespaces
+for ns in json_codeword_table.values():
+    add_namespace_list(ns, 'names', 'types')
+    add_namespace_list(ns, 'templates', 'templates')
 
 
-# Module declarations
+# Module/Context declarations
 
 @mod.capture
 def cpp_namespaced_type(m) -> str:
     "Returns a string"
 
-@ctx.capture(rule=namespaced_types_rule())
+@ctx.capture('self.cpp_namespaced_type', rule=construct_types_rule())
 def cpp_namespaced_type(m) -> str:
     ns = namespaced_types[str(m[0])]
     return "{}{}{}".format(ns[0], ns[1], ns[2][str(m[1])])
@@ -122,7 +132,7 @@ mod.list("cpp_modifiers", desc="C++ modifiers.")
 def cpp_integral(m) -> str:
     "Returns a string"
 
-@ctx.capture(rule="{self.cpp_integral}")
+@ctx.capture('self.cpp_integral', rule="{self.cpp_integral}")
 def cpp_integral(m) -> str:
     return m.cpp_integral
 
@@ -130,7 +140,7 @@ def cpp_integral(m) -> str:
 def cpp_modifiers(m) -> str:
     "Returns a string"
 
-@ctx.capture(rule = "{self.cpp_modifiers}+")
+@ctx.capture('self.cpp_modifiers', rule = "{self.cpp_modifiers}+")
 def cpp_modifiers(m) -> str:
     return " ".join(m.cpp_modifiers_list)
 
@@ -138,19 +148,18 @@ def cpp_modifiers(m) -> str:
 def cpp_known_namespaces(m) -> str:
     "Returns a string"
 
-@ctx.capture(rule="{self.cpp_known_namespaces}")
-def cpp_known_namespaces(m) -> Tuple[str, str]:
-    joiner = namespace_meta[m.cpp_known_namespaces][1]
-    return (m.cpp_known_namespaces, joiner)
+@ctx.capture('self.cpp_known_namespaces', rule="{self.cpp_known_namespaces}")
+def cpp_known_namespaces(m) -> Dict:
+    return json_namespace_table[m.cpp_known_namespaces]
 
 
 @mod.action_class
 class Actions:
-    def cpp_namespace_with_joiner(ns: Tuple[str, ...]) -> str:
+    def cpp_namespace_with_joiner(ns: Dict) -> str:
         """Returns a namespace and its joiner, e.g. 'std::' """
-        return ns[0] + ns[1]
-    def cpp_naked_namespace(ns: Tuple[str, ...]) -> str:
+        return ns['namespace'] + ns['joiner']
+    def cpp_naked_namespace(ns: Dict) -> str:
         """Gets only the namespace part of a namespace."""
-        return ns[0]
+        return ns['namespace']
     pass
 

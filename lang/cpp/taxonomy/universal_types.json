@@ -2,12 +2,15 @@
     {
         "namespace" : "std",
         "codeword" : "stud",
+        "template_operator" : "<>",
         "names" : {
-            "optional": "optional",
             "vector": "vector",
             "unique pointer": "unique_ptr",
             "shared pointer": "shared_ptr",
             "weak pointer": "weak_ptr"
+        },
+        "templates" : {
+            "optional" : "optional" 
         }
     },
     {
