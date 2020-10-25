@@ -135,7 +135,7 @@ yolo: ";\n"
 olive: "; "
 increment: "++"
 decrement: "--"
-#scope: "::"
+scope: "::"
 hut: ", "
 
 ref: "&"
@@ -192,7 +192,7 @@ con ref: " const& "
 <user.cpp_integral>: "{cpp_integral} "
 <user.cpp_namespaced_type> : "{cpp_namespaced_type} "
 
-#<user.cpp_known_namespaces>: "{cpp_known_namespaces}"
+<user.cpp_known_namespaces>: insert(user.cpp_naked_namespace(cpp_known_namespaces))
 <user.cpp_known_namespaces> scope : insert(user.cpp_namespace_with_joiner(cpp_known_namespaces))
 
 <user.cpp_namespaced_template>: 
