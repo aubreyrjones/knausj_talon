@@ -111,7 +111,7 @@ def add_namespace_list(ns, json_key, list_suffix):
 def get_namespaced_noun(ns_codeword, noun, noun_type):
     ns = json_codeword_table[ns_codeword]
     type_parse = ns[noun_type][noun]
-    return "{}{}{}".format(ns['namespace'], ns['joiner'], type_parse)
+    return ns['joiner'].join((ns['namespace'], type_parse))
 
 # Add all the known lists for all the loaded namespaces
 for ns in json_codeword_table.values():
@@ -122,8 +122,8 @@ for ns in json_codeword_table.values():
 # Module/Context declarations
 
 @mod.capture
-def cpp_known_namespaces(m) -> str:
-    "Returns a string"
+def cpp_known_namespaces(m) -> Dict:
+    "Returns a JSON dict of the namespace."
 
 @ctx.capture('self.cpp_known_namespaces', rule="{self.cpp_known_namespaces}")
 def cpp_known_namespaces(m) -> Dict:
@@ -131,7 +131,7 @@ def cpp_known_namespaces(m) -> Dict:
 
 @mod.capture
 def cpp_namespaced_type(m) -> str:
-    "Returns a string"
+    "Returns a namespaced concrete type."
 
 @ctx.capture('self.cpp_namespaced_type', rule=construct_types_rule())
 def cpp_namespaced_type(m) -> str:
@@ -139,7 +139,7 @@ def cpp_namespaced_type(m) -> str:
 
 @mod.capture
 def cpp_namespaced_template(m) -> str:
-    "Returns a string"
+    "Returns a namespaced template type."
 
 @ctx.capture('self.cpp_namespaced_template', rule=construct_types_rule("templates"))
 def cpp_namespaced_template(m) -> str:
@@ -150,7 +150,7 @@ mod.list("cpp_modifiers", desc="C++ modifiers.")
 
 @mod.capture
 def cpp_integral(m) -> str:
-    "Returns a string"
+    "Returns an integral type."
 
 @ctx.capture('self.cpp_integral', rule="{self.cpp_integral}")
 def cpp_integral(m) -> str:
@@ -158,7 +158,7 @@ def cpp_integral(m) -> str:
 
 @mod.capture
 def cpp_modifiers(m) -> str:
-    "Returns a string"
+    "Returns a C++ modifier."
 
 @ctx.capture('self.cpp_modifiers', rule = "{self.cpp_modifiers}+")
 def cpp_modifiers(m) -> str:
