@@ -10,7 +10,8 @@
             "weak pointer": "weak_ptr"
         },
         "names" : {
-            "string" : "string" 
+            "string" : "string",
+            "runtime error": "runtime_error" 
         }
     },
     {
@@ -36,6 +37,13 @@
             "you long two": "u64vec2",
             "you long three": "u64vec3",
             "you long four": "u64vec4"
+        }
+    },
+    {
+        "namespace" : "boost",
+        "codeword" : "boost",
+        "names" : {
+            "non copy" : "noncopyable"
         }
     }
 ]

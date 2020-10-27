@@ -102,7 +102,7 @@ action(user.code_block_comment):
     key(enter)
     insert("*/")
     edit.up()
-action(user.code_block_comment_prefix): "/*"
+action(user.code_block_comment_prefix): "/**"
 action(user.code_block_comment_suffix): "*/"
 
 action(user.code_block):
@@ -115,8 +115,9 @@ state undefine: "#undef "
 state if define: "#ifdef "
 
 # XXX - preprocessor instead of pre?
-state pre if: "#if "
 state error: "#error "
+state pre if: "#if "
+state pre else: "#else\n"
 state pre else if: "#elif "
 state pre end: "#endif "
 state pragma: "#pragma "
@@ -126,15 +127,30 @@ state default:
     key("enter")
 state break: "break;"
 
+state (name space | namespace): "namespace "
+state using: "using "
+state realize:
+    insert("<>")
+    key(left)
+
 
 # exclamations
 
 yolo: ";\n"
 olive: "; "
+hut: ", "
+new bungee:
+    key("end")
+    key("enter")
+    key("tab")
+bungee:
+    key("end")
+    key("down")
+    key("end")
+
 increment: "++"
 decrement: "--"
 scope: "::"
-hut: ", "
 
 ref: "&"
 return: "return "
@@ -181,7 +197,6 @@ see air format:
 # Adjectives
 
 con ref: " const& "
-
 <user.cpp_modifiers>: "{cpp_modifiers}"
 
 

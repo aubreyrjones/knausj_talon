@@ -36,6 +36,7 @@ ctx.lists["user.abbreviation"] = {
     "binary": "bin",
     "boolean": "bool",
     "british columbia": "bc",
+    "buffer": "buf",
     "button": "btn",
     "canada": "ca",
     "centimeter": "cm",
