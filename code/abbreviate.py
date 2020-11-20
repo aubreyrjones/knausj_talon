@@ -13,6 +13,7 @@ def abbreviation(m) -> str:
 
 ctx = Context()
 ctx.lists["user.abbreviation"] = {
+    "addition": "add",
     "address": "addr",
     "administrator": "admin",
     "administrators": "admins",
@@ -150,6 +151,7 @@ ctx.lists["user.abbreviation"] = {
     "package": "pkg",
     "parameter": "param",
     "parameters": "params",
+    "permission": "perm",
     "pico second": "ps",
     "pixel": "px",
     "point": "pt",
