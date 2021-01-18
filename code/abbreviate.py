@@ -6,11 +6,6 @@ mod = Module()
 mod.list("abbreviation", desc="Common abbreviation")
 
 
-@mod.capture
-def abbreviation(m) -> str:
-    "One abbreviation"
-
-
 ctx = Context()
 ctx.lists["user.abbreviation"] = {
     "addition": "add",
@@ -223,8 +218,3 @@ ctx.lists["user.abbreviation"] = {
     "what the fuck": "wtf",
     "window": "win",
 }
-
-
-@ctx.capture(rule="{user.abbreviation}")
-def abbreviation(m):
-    return m.abbreviation

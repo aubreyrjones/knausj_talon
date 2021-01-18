@@ -10,6 +10,7 @@ question mark: auto_insert("?")
 (bang | exclamation [mark]): auto_insert("!")
 dash: auto_insert("-")
 colon: auto_insert(":")
+quote: auto_insert("\"")
 # user.dictate no longer exists, so I'm not sure what this was supposed to do.
 #space: user.dictate(" ")
 (semi colon | semicolon): auto_insert(";")
@@ -67,6 +68,8 @@ formatted <user.format_text>:
     user.auto_format_resume()
 ^format selection <user.formatters>$:
     user.formatters_reformat_selection(formatters)
+dictation reset:
+    user.auto_format_reset()
 #corrections
 scratch that: user.clear_last_utterance()
 scratch selection: edit.delete()

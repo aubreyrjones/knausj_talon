@@ -40,7 +40,7 @@ _capitalize_defaults = [
 # Default words that need to be remapped.
 _word_map_defaults = {
     # E.g:
-    "corps": "core",
+    "corps": "core"
 }
 
 # Default words that should be added to Talon's vocabulary.
@@ -50,7 +50,7 @@ _simple_vocab_default = ["nmap", "admin", "Cisco", "Citrix", "VPN", "DNS", "Mine
 # Talon's vocabulary.
 _mapping_vocab_default = {
     "N map": "nmap",
-    "under documented": "under-documented",
+    "under documented": "under-documented"
 }
 
 

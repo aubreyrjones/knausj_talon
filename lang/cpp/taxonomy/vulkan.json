@@ -1,0 +1,27 @@
+[
+    {
+        "namespace" : "vk",
+        "codeword" : "vulkan",
+        "joiner" : "::",
+        "names" : {
+            "instance" : "Instance",
+            "unique instance" : "UniqueInstance"
+        }
+    },
+    {
+        "namespace" : "Vk",
+        "codeword" : "folk type",
+        "joiner" : "",
+        "names" : {
+            "extent" : "Extent2D",
+            "display mode parameters" : "DisplayModeParametersKHR"
+        }
+    },
+    {
+        "namespace" : "VK",
+        "codeword" : "vulkan enum",
+        "joiner" : "_",
+        "names" : {
+        }
+    }
+]

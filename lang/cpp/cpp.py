@@ -68,7 +68,7 @@ ctx.lists["self.cpp_modifiers"] = {
     "static": "static"
 }
 
-# Extract the raw codeword -> namespace list.
+# Extract the raw codeword -> namespace map.
 def extract_codeword_namespace():
     list_rule = {}
     for word in json_codeword_table:
@@ -85,7 +85,8 @@ def namespace_list_symbol(namespace_name, suffix = "types", prefix_self = False)
 # Construct an or-separated rule to capture each list of types.
 def construct_types_rule(suffix = "types"):
     mapped = map(lambda ns: "{} {{{}}}".format(ns['codeword'], namespace_list_symbol(ns['namespace'], suffix=suffix, prefix_self=True)), json_codeword_table.values())
-    return " | ".join(mapped)
+    rule = " | ".join(mapped)
+    return rule
 
 # Add a list from a particular namespace
 def add_namespace_list(ns, json_key, list_suffix):
@@ -97,15 +98,11 @@ def add_namespace_list(ns, json_key, list_suffix):
     except KeyError:
         pass
 
+    for k in list_to_add.keys():
+        list_to_add[k] = ns['joiner'].join((ns['namespace'], list_to_add[k]))
+
     ctx.lists["self." + sym] = list_to_add
     mod.list(sym, desc="C++ types in the {} namespace.".format(ns['namespace']))
-
-# Get a noun, properly concatenated with its namespace.
-def get_namespaced_noun(ns_codeword, noun_codeword, noun_type):
-    ns = json_codeword_table[ns_codeword]
-    type_parse = ns[noun_type][noun_codeword]
-    return ns['joiner'].join((ns['namespace'], type_parse))
-
 
 ##
 # Startup
@@ -122,6 +119,7 @@ def on_json_change(path, exists):
     newfile = pathlib.Path(path).relative_to(taxonomy_path)
     if newfile.exists():
         loaded_namespaces = load_json(newfile)
+
 fs.watch(str(taxonomy_path), on_json_change)
 
 
@@ -135,7 +133,7 @@ def cpp_known_namespaces(m) -> Dict:
 
 @ctx.capture('self.cpp_known_namespaces', rule="{self.cpp_known_namespaces}")
 def cpp_known_namespaces(m) -> Dict:
-    return json_namespace_table[m.cpp_known_namespaces]
+    return json_namespace_table[m[0]]
 
 @mod.capture
 def cpp_namespaced_type(m) -> str:
@@ -143,7 +141,7 @@ def cpp_namespaced_type(m) -> str:
 
 @ctx.capture('self.cpp_namespaced_type', rule=construct_types_rule())
 def cpp_namespaced_type(m) -> str:
-    return get_namespaced_noun(str(m[0]), str(m[1]), 'names')
+    return m[-1]
 
 @mod.capture
 def cpp_namespaced_template(m) -> str:
@@ -151,7 +149,7 @@ def cpp_namespaced_template(m) -> str:
 
 @ctx.capture('self.cpp_namespaced_template', rule=construct_types_rule("templates"))
 def cpp_namespaced_template(m) -> str:
-    return get_namespaced_noun(str(m[0]), str(m[1]), 'templates')
+    return m[-1]
 
 mod.list("cpp_integral", desc="C++ integral types.")
 mod.list("cpp_modifiers", desc="C++ modifiers.")
